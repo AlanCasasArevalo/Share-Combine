@@ -18,7 +18,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window = UIWindow(frame: UIScreen.main.bounds)
         window?.makeKeyAndVisible()
         
-        let rootVC = UIViewController()
+        let rootVC = MainViewController()
         rootVC.view.backgroundColor = UIColor.cyan
         window?.rootViewController = rootVC
 
