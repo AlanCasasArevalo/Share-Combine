@@ -18,7 +18,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window = UIWindow(frame: UIScreen.main.bounds)
         window?.makeKeyAndVisible()
         
-        let rootVC = MainViewController()
+        var rootVC = UIViewController()        
+        if #available(iOS 13.0, *) {
+            rootVC = MainViewController()
+        } else {
+        }
         rootVC.view.backgroundColor = UIColor.cyan
         window?.rootViewController = rootVC
 

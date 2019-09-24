@@ -7,54 +7,52 @@
 //
 
 import UIKit
-import RxSwift
+import Combine
 
+@available(iOS 13.0, *)
 class MainViewController: UIViewController {
 
-    let stream = PublishSubject<Double>()
-    let disposeBag = DisposeBag()
+    let stream = PassthroughSubject<Double, Never>()
+    var cancels: [Cancellable] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         let heavyCalc = stream
-            .do(onNext: { _ in
-                print("heavy calc")
+            .handleEvents( receiveOutput: { _ in
+                print("heavy Calc")
             })
             .map {
                 $0 * .pi / 180
             }
             .share()
         
-        heavyCalc
+        let cancelable1 = heavyCalc
             .map {
                 "\($0)"
             }
-            .subscribe(onNext: { rad in
-                print("subscribe #1: \(rad)")
+            .sink(receiveValue: { rad in
+                print("receiveValue #1: \(rad)")
             })
-            .disposed(by: disposeBag)
+            cancels.append(cancelable1)
         
-        heavyCalc
+        let cancelable2 = heavyCalc
             .map {
                 Int($0)
             }
             .map {
                 "\($0)"
             }
-            .subscribe(onNext: { rad in
-                print("subscribe #2: \(rad)")
+            .sink(receiveValue: { rad in
+                print("receiveValue #2: \(rad)")
             })
-            .disposed(by: disposeBag)
+            cancels.append(cancelable2)
         
-        heavyCalc
-            .map {
-                "\($0)"
-            }
-            .subscribe(onNext: { rad in
-                print("-----------------")
+        let cancelable3 = heavyCalc
+            .sink(receiveValue: { _ in
+                print("------------")
             })
-            .disposed(by: disposeBag)
+            cancels.append(cancelable3)
 
     }
 
@@ -62,7 +60,7 @@ class MainViewController: UIViewController {
     @IBAction func buttonPressed(_ sender: Any) {
         
         let randomDegree = (0...360).randomElement() ?? 0
-        stream.onNext(Double(randomDegree))
+        stream.send(Double(randomDegree))
         
     }
     
