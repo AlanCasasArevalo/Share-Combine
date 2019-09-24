@@ -24,6 +24,7 @@ class MainViewController: UIViewController {
             .map {
                 $0 * .pi / 180
             }
+            .share()
         
         heavyCalc
             .map {
